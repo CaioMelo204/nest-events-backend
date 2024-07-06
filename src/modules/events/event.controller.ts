@@ -4,16 +4,20 @@ import {
   Delete,
   Get,
   HttpCode,
-  Logger,
   Param,
   Patch,
   Post,
+  UseGuards,
 } from '@nestjs/common';
 import { EventService } from './event.service';
 import { CreateEventDto } from './dto/create-event.dto';
 import { UpdateEventDto } from './dto/update-event.dto';
+import { CurrentUser } from '../auth/decorators/user.decorator';
+import { User } from '../auth/entity/user.entity';
+import { AuthGuardJwt } from '../auth/guard/auth-guard.jwt';
 
 @Controller('/events')
+@UseGuards(AuthGuardJwt)
 export class EventController {
   constructor(private readonly eventService: EventService) {}
 
@@ -28,8 +32,8 @@ export class EventController {
   }
 
   @Post()
-  create(@Body() payload: CreateEventDto) {
-    return this.eventService.create(payload);
+  create(@Body() payload: CreateEventDto, @CurrentUser() user: User) {
+    return this.eventService.create(payload, user);
   }
 
   @Patch('/:id')

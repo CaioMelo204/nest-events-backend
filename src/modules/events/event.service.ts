@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateEventDto } from './dto/create-event.dto';
 import { UpdateEventDto } from './dto/update-event.dto';
+import { User } from '../auth/entity/user.entity';
 
 @Injectable()
 export class EventService {
@@ -27,9 +28,10 @@ export class EventService {
     });
   }
 
-  async create(event: CreateEventDto) {
+  async create(event: CreateEventDto, user: User) {
     return await this.repository.save({
       ...event,
+      organizer: user.id,
     });
   }
 
